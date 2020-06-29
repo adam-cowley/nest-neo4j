@@ -5,11 +5,6 @@ import { Neo4jService } from './neo4j.service';
 import { NEO4J_OPTIONS, NEO4J_DRIVER } from './neo4j.constants'
 import { createDriver } from './neo4j.utils';
 
-
-const createConnection = () => {
-    NEO4J_DRIVER
-}
-
 @Global()
 @Module({})
 export class Neo4jModule {

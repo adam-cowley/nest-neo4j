@@ -9,7 +9,7 @@
         "experimentalDecorators": true,
         "target": "es6",
         "sourceMap": false,
-        "outDir": "./build",
+        "outDir": "./dist",
         "rootDir": "./src",
         "skipLibCheck": true
     }

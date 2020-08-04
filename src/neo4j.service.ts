@@ -1,7 +1,8 @@
 import { Injectable, Inject, OnApplicationShutdown } from '@nestjs/common';
-import neo4j, { Driver, session, Result } from 'neo4j-driver'
+import neo4j, { Driver, Result, int, Transaction } from 'neo4j-driver'
 import { Neo4jConfig } from './interfaces/neo4j-config.interface';
 import { NEO4J_OPTIONS, NEO4J_DRIVER } from './neo4j.constants';
+import TransactionImpl from 'neo4j-driver/lib/transaction'
 
 @Injectable()
 export class Neo4jService implements OnApplicationShutdown  {
@@ -17,39 +18,57 @@ export class Neo4jService implements OnApplicationShutdown  {
         this.config = config
     }
 
-    async onApplicationShutdown(): Promise<void> {
-        await this.driver.close()
+    getDriver(): Driver {
+        return this.driver;
     }
 
     getConfig(): Neo4jConfig {
-        return this.config
+        return this.config;
+    }
+
+    int(value: number) {
+        return int(value)
+    }
+
+    beginTransaction(database?: string): Transaction {
+        const session = this.getWriteSession(database)
+
+        return session.beginTransaction()
     }
 
     getReadSession(database?: string) {
         return this.driver.session({
             database: database || this.config.database,
-            defaultAccessMode: session.READ,
+            defaultAccessMode: neo4j.session.READ,
         })
     }
 
     getWriteSession(database?: string) {
         return this.driver.session({
             database: database || this.config.database,
-            defaultAccessMode: session.WRITE,
+            defaultAccessMode: neo4j.session.WRITE,
         })
     }
 
-    read(query: string, params?: object, database?: string): Result {
-        const session = this.getReadSession(database)
+    read(cypher: string, params?: Record<string, any>, databaseOrTransaction?: string | Transaction): Result {
+        if ( databaseOrTransaction instanceof TransactionImpl ) {
+            return (<Transaction> databaseOrTransaction).run(cypher, params)
+        }
 
-        return session.run(query, params)
+        const session = this.getReadSession(<string> databaseOrTransaction)
+        return session.run(cypher, params)
     }
 
-    write(query: string, params?: object, database?: string): Result {
-        const session = this.getWriteSession(database)
+    write(cypher: string, params?: Record<string, any>,  databaseOrTransaction?: string | Transaction): Result {
+        if ( databaseOrTransaction instanceof TransactionImpl ) {
+            return (<Transaction> databaseOrTransaction).run(cypher, params)
+        }
 
-        return session.run(query, params)
+        const session = this.getWriteSession(<string> databaseOrTransaction)
+        return session.run(cypher, params)
     }
 
-
+    onApplicationShutdown() {
+        return this.driver.close()
+    }
 }

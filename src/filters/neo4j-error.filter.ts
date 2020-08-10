@@ -7,7 +7,6 @@ export class Neo4jErrorFilter implements ExceptionFilter {
     catch(exception: Neo4jError, host: ArgumentsHost) {
         const ctx = host.switchToHttp();
         const response = ctx.getResponse<Response>();
-        const request = ctx.getRequest<Request>();
 
         let statusCode = 500
         let error = 'Internal Server Error'

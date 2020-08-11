@@ -23,7 +23,8 @@
     "@nestjs/common": "^7.4.2",
     "@nestjs/config": "^0.5.0",
     "@nestjs/core": "^7.4.2",
-    "neo4j-driver": "^4.1.0"
+    "neo4j-driver": "^4.1.0",
+    "reflect-metadata": "^0.1.13"
   },
   "devDependencies": {
     "ts-node": "^8.10.2",

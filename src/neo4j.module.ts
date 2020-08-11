@@ -28,8 +28,6 @@ export class Neo4jModule {
             ],
             exports: [
                 Neo4jService,
-                Neo4jTransactionInterceptor,
-                Neo4jTypeInterceptor,
             ]
         }
     }
@@ -38,7 +36,9 @@ export class Neo4jModule {
         return {
             module: Neo4jModule,
             global: true,
-            imports: [ ConfigModule ],
+            imports: [
+                ConfigModule,
+            ],
 
             providers: [
                 {
@@ -54,8 +54,6 @@ export class Neo4jModule {
             ],
             exports: [
                 Neo4jService,
-                Neo4jTransactionInterceptor,
-                Neo4jTypeInterceptor,
             ]
         }
     }

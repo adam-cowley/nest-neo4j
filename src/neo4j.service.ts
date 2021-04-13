@@ -49,30 +49,34 @@ export class Neo4jService implements OnApplicationShutdown {
     });
   }
 
-  read(
+  async read(
     cypher: string,
     params?: Record<string, any>,
     databaseOrTransaction?: string | Transaction,
-  ): Result {
+  ): Promise<Result> {
     if (databaseOrTransaction instanceof TransactionImpl) {
       return (<Transaction>databaseOrTransaction).run(cypher, params);
     }
 
     const session = this.getReadSession(<string>databaseOrTransaction);
-    return session.run(cypher, params);
+    const result = await session.run(cypher, params);
+    session.close()
+    return result
   }
 
-  write(
+  async write(
     cypher: string,
     params?: Record<string, any>,
     databaseOrTransaction?: string | Transaction,
-  ): Result {
+  ): Promise<Result> {
     if (databaseOrTransaction instanceof TransactionImpl) {
       return (<Transaction>databaseOrTransaction).run(cypher, params);
     }
 
     const session = this.getWriteSession(<string>databaseOrTransaction);
-    return session.run(cypher, params);
+    const result = await session.run(cypher, params);
+    session.close()
+    return result
   }
 
   onApplicationShutdown() {

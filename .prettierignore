@@ -1,0 +1,6 @@
+**/node_modules/**
+**/local_modules/**
+**/build/**
+**/dist/**
+**/*.dll.js
+**/*.worker.js

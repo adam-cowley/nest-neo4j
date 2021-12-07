@@ -1,6 +1,6 @@
 import { int } from 'neo4j-driver'
-import { Node, Relationship } from 'neo4j-driver/lib/graph-types'
-import { Result } from 'neo4j-driver/lib/result'
+import { Node, Relationship } from 'neo4j-driver-core/lib/graph-types'
+import { Result } from 'neo4j-driver-core/lib/result'
 
 let _nodeId = 0
 let _relationshipId = 0

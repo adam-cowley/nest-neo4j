@@ -11,8 +11,8 @@ import neo4j, {
     isInt,
     isPoint,
  } from 'neo4j-driver'
-import { isNode, isRelationship } from 'neo4j-driver/lib/graph-types'
-import Result from 'neo4j-driver/lib/result'
+import { isNode, isRelationship } from 'neo4j-driver-core/lib/graph-types'
+import Result from 'neo4j-driver-core/lib/result'
 
 const toNative = (value: any, showLabelsOrType?: boolean, showIdentity?: boolean): any => {
     if ( value === null || value === undefined ) return undefined

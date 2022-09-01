@@ -34,7 +34,8 @@ import { Neo4jModule } from 'nest-neo4j'
       host: 'localhost',
       port: 7687,
       username: 'neo4j',
-      password: 'neo'
+      password: 'neo',
+      disableLosslessIntegers: false,
     })
   ],
   controllers: [AppController],

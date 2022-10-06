@@ -74,3 +74,7 @@ getWriteSession(database?: string): Session;
 read(query: string, params?: object, database?: string): Result;
 write(query: string, params?: object, database?: string): Result;
 ```
+
+# More Information
+
+For more information about running Neo4j in your Node.js or TypeScript project, checkout [Neo4j GraphAcademy](https://graphacademy.neo4j.com).

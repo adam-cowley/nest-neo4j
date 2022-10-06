@@ -1,5 +1,5 @@
 import { Injectable, Inject, OnApplicationShutdown } from '@nestjs/common';
-import neo4j, { Driver, Result, int, Transaction } from 'neo4j-driver'
+import neo4j, { Driver, int, Transaction, QueryResult } from 'neo4j-driver'
 import { Neo4jConfig } from './interfaces/neo4j-config.interface';
 import { NEO4J_OPTIONS, NEO4J_DRIVER } from './neo4j.constants';
 import TransactionImpl from 'neo4j-driver-core/lib/transaction'
@@ -50,22 +50,30 @@ export class Neo4jService implements OnApplicationShutdown  {
         })
     }
 
-    read(cypher: string, params?: Record<string, any>, databaseOrTransaction?: string | Transaction): Result {
+    async read(cypher: string, params?: Record<string, any>, databaseOrTransaction?: string | Transaction): Promise<QueryResult> {
         if ( databaseOrTransaction instanceof TransactionImpl ) {
             return (<Transaction> databaseOrTransaction).run(cypher, params)
         }
 
         const session = this.getReadSession(<string> databaseOrTransaction)
-        return session.run(cypher, params)
+        const res = await session.executeRead(tx => tx.run(cypher, params))
+
+        await session.close()
+
+        return res
     }
 
-    write(cypher: string, params?: Record<string, any>,  databaseOrTransaction?: string | Transaction): Result {
+    async write(cypher: string, params?: Record<string, any>,  databaseOrTransaction?: string | Transaction): Promise<QueryResult> {
         if ( databaseOrTransaction instanceof TransactionImpl ) {
             return (<Transaction> databaseOrTransaction).run(cypher, params)
         }
 
         const session = this.getWriteSession(<string> databaseOrTransaction)
-        return session.run(cypher, params)
+        const res = await session.executeWrite(tx => tx.run(cypher, params))
+
+        await session.close()
+
+        return res
     }
 
     onApplicationShutdown() {

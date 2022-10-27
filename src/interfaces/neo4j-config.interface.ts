@@ -1,3 +1,4 @@
+import { types } from "neo4j-driver-core";
 export type Neo4jScheme = 'neo4j' | 'neo4j+s' | 'neo4j+scc' | 'bolt' | 'bolt+s' | 'bolt+scc'
 
 export interface Neo4jConfig {
@@ -7,5 +8,5 @@ export interface Neo4jConfig {
     username: string;
     password: string;
     database?: string;
-    disableLosslessIntegers?: boolean;
+    options?: types.Config;
 }

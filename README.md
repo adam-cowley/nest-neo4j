@@ -1,6 +1,6 @@
 <p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://kamilmysliwiec.com/public/nest-logo.png#1" alt="Nest Logo" />   </a>
-  <a href="https://neo4j.com" target="_blank"><img src="https://dist.neo4j.com/wp-content/uploads/20140926224303/neo4j_logo-facebook.png" width="380"></a>
+  <a href="http://nestjs.com/" target="blank"><img src="https://kamilmysliwiec.com/public/nest-logo.png#1" alt="Nest Logo" height="155" />   </a>
+  <a href="https://neo4j.com" target="_blank"><img src="https://dist.neo4j.com/wp-content/uploads/20210423072428/neo4j-logo-2020-1.svg" height="155"></a>
 </p>
 
 # Nest Neo4j
@@ -68,7 +68,7 @@ export class AppController {
 ## Methods
 
 ```ts
-getConfig(): Neo4jConfig;
+getConfig(): Neo4jConnection;
 getReadSession(database?: string): Session;
 getWriteSession(database?: string): Session;
 read(query: string, params?: object, database?: string): Result;
@@ -77,4 +77,4 @@ write(query: string, params?: object, database?: string): Result;
 
 # More Information
 
-For more information about running Neo4j in your Node.js or TypeScript project, checkout [Neo4j GraphAcademy](https://graphacademy.neo4j.com).
+For more information about running Neo4j in your Node.js or TypeScript project, check out [Neo4j GraphAcademy](https://graphacademy.neo4j.com).

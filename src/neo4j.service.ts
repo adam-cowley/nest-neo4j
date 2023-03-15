@@ -1,6 +1,6 @@
 import { Injectable, Inject, OnApplicationShutdown } from '@nestjs/common';
 import neo4j, { Driver, int, Transaction, QueryResult } from 'neo4j-driver'
-import { Neo4jConfig } from './interfaces/neo4j-config.interface';
+import { Neo4jConnection } from './interfaces/neo4j-connection.interface';
 import { NEO4J_OPTIONS, NEO4J_DRIVER } from './neo4j.constants';
 import TransactionImpl from 'neo4j-driver-core/lib/transaction'
 
@@ -8,22 +8,22 @@ import TransactionImpl from 'neo4j-driver-core/lib/transaction'
 export class Neo4jService implements OnApplicationShutdown  {
 
     private readonly driver: Driver;
-    private readonly config: Neo4jConfig;
+    private readonly connection: Neo4jConnection;
 
     constructor(
-        @Inject(NEO4J_OPTIONS) config: Neo4jConfig,
+        @Inject(NEO4J_OPTIONS) config: Neo4jConnection,
         @Inject(NEO4J_DRIVER) driver: Driver
     ) {
         this.driver = driver
-        this.config = config
+        this.connection = config
     }
 
     getDriver(): Driver {
         return this.driver;
     }
 
-    getConfig(): Neo4jConfig {
-        return this.config;
+    getConfig(): Neo4jConnection {
+        return this.connection;
     }
 
     int(value: number) {
@@ -38,14 +38,14 @@ export class Neo4jService implements OnApplicationShutdown  {
 
     getReadSession(database?: string) {
         return this.driver.session({
-            database: database || this.config.database,
+            database: database || this.connection.database,
             defaultAccessMode: neo4j.session.READ,
         })
     }
 
     getWriteSession(database?: string) {
         return this.driver.session({
-            database: database || this.config.database,
+            database: database || this.connection.database,
             defaultAccessMode: neo4j.session.WRITE,
         })
     }

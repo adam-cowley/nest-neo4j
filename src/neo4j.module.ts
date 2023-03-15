@@ -1,26 +1,26 @@
 import { Module, DynamicModule, Provider } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { Neo4jService } from './neo4j.service';
-import { Neo4jConfig } from './interfaces/neo4j-config.interface';
+import { Neo4jConnection } from './interfaces/neo4j-connection.interface';
 import { NEO4J_OPTIONS, NEO4J_DRIVER } from './neo4j.constants';
-import { createDriver } from './neo4j.utils';
+import { coerceNumber, createDriver, isTruthy } from './neo4j.utils';
 
 @Module({})
 export class Neo4jModule {
 
-    static forRoot(config: Neo4jConfig): DynamicModule {
+    static forRoot(connection: Neo4jConnection): DynamicModule {
         return {
             module: Neo4jModule,
             global: true,
             providers: [
                 {
                     provide: NEO4J_OPTIONS,
-                    useValue: config,
+                    useValue: connection,
                 },
                 {
                     provide: NEO4J_DRIVER,
                     inject: [ NEO4J_OPTIONS ],
-                    useFactory: async (config: Neo4jConfig) => createDriver(config),
+                    useFactory: async (connection: Neo4jConnection) => createDriver(connection),
                 },
                 Neo4jService,
             ],
@@ -46,7 +46,7 @@ export class Neo4jModule {
                 {
                     provide: NEO4J_DRIVER,
                     inject: [ NEO4J_OPTIONS ],
-                    useFactory: async (config: Neo4jConfig) => createDriver(config),
+                    useFactory: async (connection: Neo4jConnection) => createDriver(connection),
                 },
                 Neo4jService,
             ],
@@ -67,19 +67,34 @@ export class Neo4jModule {
                 {
                     provide: NEO4J_OPTIONS,
                     inject: [ ConfigService ],
-                    useFactory: (configService: ConfigService) : Neo4jConfig => ({
+                    useFactory: (configService: ConfigService) : Neo4jConnection => ({
                         scheme: configService.get('NEO4J_SCHEME'),
                         host: configService.get('NEO4J_HOST'),
                         port: configService.get('NEO4J_PORT'),
                         username: configService.get('NEO4J_USERNAME'),
                         password: configService.get('NEO4J_PASSWORD'),
                         database: configService.get('NEO4J_DATABASE'),
+                        config: {
+                            encrypted: configService.get('NEO4J_ENCRYPTION_LEVEL'),
+                            trust: configService.get('NEO4J_TRUST_STRATEGY'),
+                            trustedCertificates: configService.get('NEO4J_TRUSTED_CERTIFICATES')?.split(',').map(cert => cert.trim()),
+                            knownHosts: configService.get('NEO4J_KNOWN_HOSTS'),
+                            fetchSize: coerceNumber(configService.get('NEO4J_FETCH_SIZE')),
+                            maxConnectionPoolSize: coerceNumber(configService.get('NEO4J_MAXIMUM_POOL_SIZE')),
+                            maxTransactionRetryTime: coerceNumber(configService.get('NEO4J_TRANSACTION_RETRY_TIME')),
+                            maxConnectionLifetime: coerceNumber(configService.get('NEO4J_MAX_CONNECTION_LIFETIME')),
+                            connectionAcquisitionTimeout: coerceNumber(configService.get('NEO4J_CONNECTION_ACQUISITION_TIMEOUT')),
+                            connectionTimeout: coerceNumber(configService.get('NEO4J_CONNECTION_TIMEOUT')),
+                            disableLosslessIntegers: isTruthy(configService.get('NEO4J_DISABLE_LOSSLESS_INTEGERS')),
+                            useBigInt: isTruthy(configService.get('NEO4J_USE_BIG_INT')),
+                            userAgent: configService.get('NEO4J_USER_AGENT'),
+                        }
                     })
                 } as Provider<any>,
                 {
                     provide: NEO4J_DRIVER,
                     inject: [ NEO4J_OPTIONS ],
-                    useFactory: async (config: Neo4jConfig) => createDriver(config),
+                    useFactory: async (connection: Neo4jConnection) => createDriver(connection),
                 },
                 Neo4jService,
             ],
